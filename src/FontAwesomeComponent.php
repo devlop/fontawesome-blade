@@ -72,7 +72,7 @@ abstract class FontAwesomeComponent extends Component
 
         $match = null;
 
-        if (! preg_match('~<svg .+viewBox="(?P<viewBox>0 0 (?P<width>\d+) (?P<height>\d+))"><!--.+--><path d="(?P<path>[^"]+)"/></svg>~', $contents, $match)) {
+        if (! preg_match('~<svg .+viewBox="(?P<viewBox>0 0 (?P<width>\d+) (?P<height>\d+))"><!--.+--><path d="(?P<path>[^"]+)"(?:/>|></path>)</svg>~', $contents, $match)) {
             throw new \RuntimeException('Invalid icon, failed to parse svg');
         }
 
