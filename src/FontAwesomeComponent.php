@@ -28,6 +28,15 @@ abstract class FontAwesomeComponent extends Component
     private string $name;
 
     /**
+     * List of already rendered icons
+     *
+     * @var array<string>
+     */
+    private static array $rendered = [
+        //
+    ];
+
+    /**
      * Create a new component instance.
      *
      * @param  string  $package
@@ -53,8 +62,17 @@ abstract class FontAwesomeComponent extends Component
 
         $inlineSvgClasses = $this->getInlineSvgClasses($this->name, $svg['width'], $svg['height']);
 
+        $id = "fa-{$this->style}--{$this->name}";
+
+        $shouldOutputSymbol = tap((self::$rendered[$id] ?? null) === null, function () use ($id) : void {
+            self::$rendered[$id] = true;
+        });
+
         return view('fontawesome-blade::components.fa-icon', [
-            'name' => $this->name,
+            // 'style' => $this->style,
+            // 'name' => $this->name,
+            'shouldOutputSymbol' => $shouldOutputSymbol,
+            'id' => $id,
             'viewBox' => $svg['viewBox'],
             'inlineSvgClasses' => $inlineSvgClasses,
             'path' => $svg['path'],
@@ -107,7 +125,7 @@ abstract class FontAwesomeComponent extends Component
     {
         return implode(' ', [
             $this->defaultReplacementClass,
-            $name,
+            // $name,
             'fa-w-' . ceil($width / $height * 16), // widthClass
         ]);
     }
