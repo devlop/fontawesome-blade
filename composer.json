@@ -1,0 +1,43 @@
+{
+    "name": "devlop/fontawesome-blade",
+    "description": "Laravel Blade Components for Font Awesome",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Johan Rosenson",
+            "email": "johan@devlop.se"
+        }
+    ],
+    "require": {
+        "php": "^7.4|^8.0",
+        "laravel/framework": "^7.0|^8.0"
+    },
+    "require-dev": {
+        "devlop/phpunit-exception-assertions": "^1.0",
+        "phpunit/phpunit": "^9.5",
+        "symfony/var-dumper": "^5.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Devlop\\FontAwesome\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Devlop\\FontAwesome\\Tests\\": "tests/"
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.x-dev"
+        },
+        "laravel": {
+            "providers": [
+                "Devlop\\FontAwesome\\FontAwesomeBladeServiceProvider"
+            ]
+        }
+    }
+}
