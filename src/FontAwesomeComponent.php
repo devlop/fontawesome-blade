@@ -54,7 +54,7 @@ abstract class FontAwesomeComponent extends Component
         $inlineSvgClasses = $this->getInlineSvgClasses($this->name, $svg['width'], $svg['height']);
 
         return view('fontawesome-blade::components.fa-icon', [
-            'name' => $this->name,
+            // 'name' => $this->name,
             'viewBox' => $svg['viewBox'],
             'inlineSvgClasses' => $inlineSvgClasses,
             'path' => $svg['path'],
@@ -107,7 +107,7 @@ abstract class FontAwesomeComponent extends Component
     {
         return implode(' ', [
             $this->defaultReplacementClass,
-            $name,
+            // $name,
             'fa-w-' . ceil($width / $height * 16), // widthClass
         ]);
     }
