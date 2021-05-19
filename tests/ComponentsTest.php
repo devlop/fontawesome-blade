@@ -12,7 +12,6 @@ use Devlop\FontAwesome\Components\FaSolid;
 use Devlop\FontAwesome\Components\FaThin;
 use Devlop\FontAwesome\FontAwesomeBladeServiceProvider;
 use Devlop\FontAwesome\FontAwesomeComponent;
-use Generator;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
