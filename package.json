@@ -1,0 +1,6 @@
+{
+    "private": true,
+    "devDependencies": {
+        "@fortawesome/fontawesome-pro": "6.0.0-alpha3"
+    }
+}
