@@ -4,12 +4,6 @@ declare(strict_types=1);
 
 namespace Devlop\FontAwesome;
 
-// use Devlop\Speedtrap\SpeedtrapComponent;
-// use Devlop\Speedtrap\SpeedtrapServiceInterface;
-// use Devlop\Speedtrap\SpeedtrapTriggeredEvent;
-// use Devlop\Speedtrap\WithSpeedtrap;
-// use Illuminate\Contracts\Foundation\Application;
-// use Illuminate\Foundation\Http\FormRequest;
 use Devlop\FontAwesome\Components\FaBrands;
 use Devlop\FontAwesome\Components\FaDuotone;
 use Devlop\FontAwesome\Components\FaLight;
@@ -18,6 +12,7 @@ use Devlop\FontAwesome\Components\FaSolid;
 use Devlop\FontAwesome\Components\FaThin;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
+use RuntimeException;
 
 final class FontAwesomeBladeServiceProvider extends ServiceProvider
 {
@@ -57,6 +52,10 @@ final class FontAwesomeBladeServiceProvider extends ServiceProvider
 
         $config = $this->app['config']->get('fontawesome-blade');
 
+        if (! is_string($config['package']) || $config['package'] === '') {
+            throw new RuntimeException('No Font Awesome package path configured.');
+        }
+
         Blade::components([
             FaSolid::class => 'fa.solid',
             FaRegular::class => 'fa.regular',
@@ -65,7 +64,6 @@ final class FontAwesomeBladeServiceProvider extends ServiceProvider
             FaDuotone::class => 'fa.duotone',
             FaBrands::class => 'fa.brands',
         ]);
-
 
         $this->app->when(FaSolid::class)->needs('$package')->give($config['package']);
         $this->app->when(FaRegular::class)->needs('$package')->give($config['package']);

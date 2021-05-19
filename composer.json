@@ -16,7 +16,8 @@
     "require-dev": {
         "devlop/phpunit-exception-assertions": "^1.0",
         "phpunit/phpunit": "^9.5",
-        "symfony/var-dumper": "^5.2"
+        "symfony/var-dumper": "^5.2",
+        "orchestra/testbench": "^6.17"
     },
     "autoload": {
         "psr-4": {
@@ -39,5 +40,10 @@
                 "Devlop\\FontAwesome\\FontAwesomeBladeServiceProvider"
             ]
         }
+    },
+    "scripts": {
+        "post-autoload-dump": [
+            "@php ./vendor/bin/testbench package:discover --ansi"
+        ]
     }
 }

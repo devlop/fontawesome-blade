@@ -57,7 +57,8 @@ abstract class FontAwesomeComponent extends Component
             // 'name' => $this->name,
             'viewBox' => $svg['viewBox'],
             'inlineSvgClasses' => $inlineSvgClasses,
-            'path' => $svg['path'],
+            'style' => $svg['style'],
+            'paths' => $svg['paths'],
         ]);
     }
 
@@ -70,18 +71,17 @@ abstract class FontAwesomeComponent extends Component
 
         $contents = file_get_contents($path);
 
-        $match = null;
+        $svg = $this->parseSvg($contents);
 
-        if (! preg_match('~<svg .+viewBox="(?P<viewBox>0 0 (?P<width>\d+) (?P<height>\d+))"><!--.+--><path d="(?P<path>[^"]+)"(?:/>|></path>)</svg>~', $contents, $match)) {
-            throw new \RuntimeException('Invalid icon, failed to parse svg');
+        if (! $svg) {
+            dd($contents);
+            throw new \RuntimeException(sprintf(
+                'Invalid icon "%1$s", failed to parse svg.',
+                $name,
+            ));
         }
 
-        return [
-            'viewBox' => $match['viewBox'],
-            'width' => (int) $match['width'],
-            'height' => (int) $match['height'],
-            'path' => $match['path'],
-        ];
+        return $svg;
     }
 
     /**
@@ -95,6 +95,80 @@ abstract class FontAwesomeComponent extends Component
             $style,
             Str::after($name, 'fa-'),
         );
+    }
+
+    /**
+     * Parse the svg.
+     *
+     * @return array<string,int|string|array<array<string,string>>>
+     */
+    private function parseSvg(string $contents) : ?array
+    {
+        $svgMatch = null;
+        $pathsMatches = null;
+
+        if (! preg_match($this->getSvgRegex(), $contents, $svgMatch)) {
+            return null;
+        }
+
+        if (! preg_match_all($this->getPathsRegex(), $svgMatch['paths'], $pathsMatches, \PREG_SET_ORDER)) {
+            return null;
+        }
+
+        $paths = array_map(function (array $path) : array {
+            return [
+                'class' => $path['class'],
+                'd' => $path['d'],
+            ];
+        }, $pathsMatches);
+
+        return [
+            'viewBox' => $svgMatch['viewBox'],
+            'width' => (int) $svgMatch['width'],
+            'height' => (int) $svgMatch['height'],
+            'style' => $svgMatch['style'],
+            'paths' => $paths,
+        ];
+    }
+
+    /**
+     * Get the svg regex pattern.
+     */
+    private function getSvgRegex() : string
+    {
+        return '~^
+            <svg\s.+viewBox="(?P<viewBox>0\s0\s(?P<width>\d+)\s(?P<height>\d+))">   # opening <svg> with width and height (from viewBox attribute)
+            <!--.+-->                                                               # Font Awesome License Comment
+            (?:                                                                     # optional style definitions, used by duotone
+                <defs>
+                    <style>
+                        (?P<style>.+)                                               # capture group "styles" for the styles
+                    </style>
+                </defs>
+            )?
+            (?P<paths>                                                              # capture group "paths"
+                (?:
+                    <path                                                           # opening <path>
+                        \s.+?                                                       # path contents
+                    (?:/>|></path>)                                                 # either self closing /> or closing </path>
+                ){1,2}                                                              # match 1-2 <path>
+            )
+            </svg>                                                                  # closing </svg>
+        $~x';
+    }
+
+    /**
+     * Get the <path> regex pattern.
+     */
+    private function getPathsRegex() : string
+    {
+        return '~
+            <path                                       # opening <path>
+                (?:\sclass="(?P<class>[^"]+)")?         # optional classes
+                \sd="(?P<d>[^"]+)"                      # the path definition "d" attribute
+                .*?                                     # ignore any un-needed information after "d" attribute
+            (?:/>|></path>)                             # either self closing /> or closing </path>
+        ~x';
     }
 
     /**

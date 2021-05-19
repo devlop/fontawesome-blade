@@ -7,5 +7,10 @@
         'viewBox' => $viewBox,
     ]) }}
 >
-    <path fill="currentColor" d="{{ $path }}"/>
+    @if ($style)
+        <defs><style>{{ $style }}</style></defs>
+    @endif
+    @foreach ($paths as $path)
+        <path fill="currentColor" {{ $path['class'] ? 'class="' . $path['class'] . '"' : '' }} d="{{ $path['d'] }}" />
+    @endforeach
 </svg>
