@@ -74,7 +74,6 @@ abstract class FontAwesomeComponent extends Component
         $svg = $this->parseSvg($contents);
 
         if (! $svg) {
-            dd($contents);
             throw new \RuntimeException(sprintf(
                 'Invalid icon "%1$s", failed to parse svg.',
                 $name,
