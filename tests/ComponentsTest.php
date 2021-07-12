@@ -108,6 +108,19 @@ final class ComponentsTest extends TestCase
         $this->assertIsString($this->renderComponent($component));
     }
 
+    /** @test */
+    public function duotone_user_crown_have_the_correct_classnames() : void
+    {
+        $component = $this->app->make(FaDuotone::class, [
+            'name' => 'user-crown',
+        ]);
+
+        $output = $this->renderComponent($component);
+
+        $this->assertStringContainsString('class="fa-primary"', $output);
+        $this->assertStringContainsString('class="fa-secondary"', $output);
+    }
+
     /**
      * @test
      * @dataProvider components

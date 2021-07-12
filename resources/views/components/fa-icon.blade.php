@@ -11,6 +11,6 @@
         <defs><style>{{ $style }}</style></defs>
     @endif
     @foreach ($paths as $path)
-        <path fill="currentColor" {{ $path['class'] ? 'class="' . $path['class'] . '"' : '' }} d="{{ $path['d'] }}" />
+        <path fill="currentColor" class="{{ $path['class'] }}" d="{{ $path['d'] }}" />
     @endforeach
 </svg>
