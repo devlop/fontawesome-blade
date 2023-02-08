@@ -5,7 +5,7 @@
 
 # Font Awesome Blade
 
-Laravel [Blade Components](https://laravel.com/docs/8.x/blade#components) to make it dead simple to use Font Awesome SVG's in Laravel.
+A collection of [Laravel Blade Components](https://laravel.com/docs/9.x/blade#components) to make it dead simple to use the [Font Awesome icons](https://fontawesome.com/v6/icons) in Laravel.
 
 # Prerequisites
 
@@ -43,7 +43,7 @@ Each of Font Awesome's different styles are available as separate components, th
 <x-fa.duotone name="fa-elephant" />
 ```
 
-You also need to import the Font Awesome styles into your SASS to get the icons to display identical to using the JS method.
+You also need to import the Font Awesome CSS into your CSS build to get the icons to display like they would if you were using the Font Awesome JS method.
 
 ```scss
 @import '@fortawesome/fontawesome-pro/css/svg-with-js.css';
