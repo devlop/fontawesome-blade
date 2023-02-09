@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Devlop\FontAwesome;
 
-use Devlop\FontAwesome\Components\FaBrands;
-use Devlop\FontAwesome\Components\FaDuotone;
-use Devlop\FontAwesome\Components\FaLight;
-use Devlop\FontAwesome\Components\FaRegular;
-use Devlop\FontAwesome\Components\FaSolid;
-use Devlop\FontAwesome\Components\FaThin;
+use Devlop\FontAwesome\Components\Brands;
+use Devlop\FontAwesome\Components\Duotone;
+use Devlop\FontAwesome\Components\Light;
+use Devlop\FontAwesome\Components\Regular;
+use Devlop\FontAwesome\Components\Solid;
+use Devlop\FontAwesome\Components\Thin;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 use RuntimeException;
@@ -33,7 +33,7 @@ final class FontAwesomeBladeServiceProvider extends ServiceProvider
      */
     public function register() : void
     {
-        $this->mergeConfigFrom($this->getConfigPath(), 'fontawesome-blade');
+        $this->mergeConfigFrom($this->getConfigPath('fontawesome.php'), 'fontawesome');
     }
 
     /**
@@ -45,39 +45,54 @@ final class FontAwesomeBladeServiceProvider extends ServiceProvider
 
         $this->publishes(
             [
-                $this->getConfigPath() => config_path('fontawesome-blade.php'),
+                $this->getConfigPath('fontawesome.php') => config_path('fontawesome.php'),
             ],
             'config',
         );
 
-        $config = $this->app['config']->get('fontawesome-blade');
+        // first check legacy config, then load the new config.
+        $config = $this->app['config']->get('fontawesome-blade') ?? $this->app['config']->get('fontawesome');
 
-        if (! is_string($config['package']) || $config['package'] === '') {
-            throw new RuntimeException('No Font Awesome package path configured.');
+        $path = array_key_exists('package', $config)
+            ? rtrim($config['package'], '/') . '/svgs'
+            : $config['path'];
+
+        if (! is_string($path)) {
+            throw new RuntimeException(sprintf(
+                'fontawesome.path must be a string, %1$s given.',
+                get_debug_type($path),
+            ));
         }
 
+        if (! is_dir($path)) {
+            throw new RuntimeException(sprintf(
+                '"%1$s" is not a valid Font Awesome path.',
+                $path,
+            ));
+        }
+
+        Blade::componentNamespace('Devlop\\FontAwesome\\Components', 'fa');
+
+        // legacy aliases
         Blade::components([
-            FaSolid::class => 'fa.solid',
-            FaRegular::class => 'fa.regular',
-            FaLight::class => 'fa.light',
-            FaThin::class => 'fa.thin',
-            FaDuotone::class => 'fa.duotone',
-            FaBrands::class => 'fa.brands',
+            Solid::class => 'fa.solid',
+            Regular::class => 'fa.regular',
+            Light::class => 'fa.light',
+            Thin::class => 'fa.thin',
+            Duotone::class => 'fa.duotone',
+            Brands::class => 'fa.brands',
         ]);
 
-        $this->app->when(FaSolid::class)->needs('$package')->give($config['package']);
-        $this->app->when(FaRegular::class)->needs('$package')->give($config['package']);
-        $this->app->when(FaLight::class)->needs('$package')->give($config['package']);
-        $this->app->when(FaThin::class)->needs('$package')->give($config['package']);
-        $this->app->when(FaDuotone::class)->needs('$package')->give($config['package']);
-        $this->app->when(FaBrands::class)->needs('$package')->give($config['package']);
+        $this->app->when(Solid::class)->needs('$path')->give($path);
+        $this->app->when(Regular::class)->needs('$path')->give($path);
+        $this->app->when(Light::class)->needs('$path')->give($path);
+        $this->app->when(Thin::class)->needs('$path')->give($path);
+        $this->app->when(Duotone::class)->needs('$path')->give($path);
+        $this->app->when(Brands::class)->needs('$path')->give($path);
     }
 
-    /**
-     * Get the speedtrap config path
-     */
-    private function getConfigPath() : string
+    private function getConfigPath(string $fileName) : string
     {
-        return __DIR__ . '/../config/fontawesome-blade.php';
+        return realpath(__DIR__ . '/../config/' . $fileName);
     }
 }

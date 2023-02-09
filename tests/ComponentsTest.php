@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Devlop\FontAwesome\Tests;
 
-use Devlop\FontAwesome\Components\FaBrands;
-use Devlop\FontAwesome\Components\FaDuotone;
-use Devlop\FontAwesome\Components\FaLight;
-use Devlop\FontAwesome\Components\FaRegular;
-use Devlop\FontAwesome\Components\FaSolid;
-use Devlop\FontAwesome\Components\FaThin;
+use Devlop\FontAwesome\Components\Brands;
+use Devlop\FontAwesome\Components\Duotone;
+use Devlop\FontAwesome\Components\Light;
+use Devlop\FontAwesome\Components\Regular;
+use Devlop\FontAwesome\Components\Solid;
+use Devlop\FontAwesome\Components\Thin;
+use Devlop\FontAwesome\FontAwesomeBaseComponent;
 use Devlop\FontAwesome\FontAwesomeBladeServiceProvider;
-use Devlop\FontAwesome\FontAwesomeComponent;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
@@ -39,49 +39,56 @@ final class ComponentsTest extends TestCase
      */
     protected function getEnvironmentSetUp($app) : void
     {
-        $app['config']->set('fontawesome-blade.package', (function () : string {
-            return realpath(__DIR__ . '/../node_modules/@fortawesome/fontawesome-pro');
-        })());
+        $app['config']->set(
+            'fontawesome.path',
+            realpath(__DIR__ . '/../node_modules/@fortawesome/fontawesome-pro/svgs'),
+        );
     }
 
     /**
-     * Component data provider.
+     * (-pro) Component data provider.
      *
      * @return array<string,array<class-string>>
      */
-    public function components() : array
+    public static function components() : array
     {
         return [
-            'brands' => [FaBrands::class],
-            'duotone' => [FaDuotone::class],
-            'light' => [FaLight::class],
-            'regular' => [FaRegular::class],
-            'solid' => [FaSolid::class],
-            'thin' => [FaThin::class],
+            'brands' => [Brands::class],
+            'duotone' => [Duotone::class],
+            'light' => [Light::class],
+            'regular' => [Regular::class],
+            'solid' => [Solid::class],
+            'thin' => [Thin::class],
         ];
     }
 
     /**
-     * @test
-     * @dataProvider components
+     * (-pro and -free) Component data provider.
      *
-     * @param  class-string  $componentName
-     * @return void
+     * @return array<string,array<class-string>>
      */
-    public function style_components_are_instances_of_the_base_component(string $componentName) : void
+    public static function packageComponents() : array
     {
-        $this->assertInstanceOf(
-            FontAwesomeComponent::class,
-            $this->app->make($componentName, [
-                'name' => 'fa-laravel',
-            ]),
-        );
+        $freePath = realpath(__DIR__ . '/../node_modules/@fortawesome/fontawesome-free/svgs');
+        $proPath = realpath(__DIR__ . '/../node_modules/@fortawesome/fontawesome-pro/svgs');
+
+        return [
+            'free-brands' => [$freePath, Brands::class],
+            'free-regular' => [$freePath, Regular::class],
+            'free-solid' => [$freePath, Solid::class],
+            'pro-brands' => [$proPath, Brands::class],
+            'pro-duotone' => [$proPath, Duotone::class],
+            'pro-light' => [$proPath, Light::class],
+            'pro-regular' => [$proPath, Regular::class],
+            'pro-solid' => [$proPath, Solid::class],
+            'pro-thin' => [$proPath, Thin::class],
+        ];
     }
 
     /** @test */
     public function brands_buffer_can_be_rendered() : void
     {
-        $component = $this->app->make(FaBrands::class, [
+        $component = $this->app->make(Brands::class, [
             'name' => 'buffer',
         ]);
 
@@ -91,7 +98,7 @@ final class ComponentsTest extends TestCase
     /** @test */
     public function duotone_zero_can_be_rendered() : void
     {
-        $component = $this->app->make(FaDuotone::class, [
+        $component = $this->app->make(Duotone::class, [
             'name' => '0',
         ]);
 
@@ -101,7 +108,7 @@ final class ComponentsTest extends TestCase
     /** @test */
     public function duotone_360_degrees_can_be_rendered() : void
     {
-        $component = $this->app->make(FaDuotone::class, [
+        $component = $this->app->make(Duotone::class, [
             'name' => '360-degrees',
         ]);
 
@@ -111,7 +118,7 @@ final class ComponentsTest extends TestCase
     /** @test */
     public function duotone_user_crown_have_the_correct_classnames() : void
     {
-        $component = $this->app->make(FaDuotone::class, [
+        $component = $this->app->make(Duotone::class, [
             'name' => 'user-crown',
         ]);
 
@@ -123,37 +130,36 @@ final class ComponentsTest extends TestCase
 
     /**
      * @test
-     * @dataProvider components
+     * @dataProvider packageComponents
      *
      * @param  class-string  $componentName
-     * @return void
      */
-    public function all_icons_can_be_rendered(string $componentName) : void
+    public function all_icons_can_be_rendered(string $path, string $componentName) : void
     {
-        $package = $this->app['config']->get('fontawesome-blade.package');
-
         $style = Str::of(class_basename($componentName))
             ->after('Fa')
             ->lower();
 
-        $path = implode('/', [
-            $package,
-            'svgs',
+        $iconsPath = implode('/', [
+            $path,
             $style,
         ]);
 
-        $icons = (new Collection(scandir($path)))
+        $icons = (new Collection(scandir($iconsPath)))
             ->filter(function (string $icon) : bool {
-                if (in_array($icon, ['.', '..'], true)) {
-                    return false;
-                }
+                $ignore = [
+                    '.',
+                    '..',
+                ];
 
-                return true;
+                return ! in_array($icon, $ignore, true);
             })
+            ->values()
             ->map(fn (string $icon) : string => Str::before($icon, '.svg'));
 
         foreach ($icons as $icon) {
             $component = $this->app->make($componentName, [
+                'path' => $path,
                 'name' => $icon,
             ]);
 
@@ -166,7 +172,7 @@ final class ComponentsTest extends TestCase
      *
      * @link https://laracasts.com/discuss/channels/laravel/testing-blade-components
      */
-    private function renderComponent(FontAwesomeComponent $component) : string
+    private function renderComponent(FontAwesomeBaseComponent $component) : string
     {
         return $component
             ->resolveView()
