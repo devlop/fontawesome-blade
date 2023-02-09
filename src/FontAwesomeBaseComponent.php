@@ -8,48 +8,41 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Support\Str;
 use Illuminate\View\Component;
 
-abstract class FontAwesomeComponent extends Component
+abstract class FontAwesomeBaseComponent extends Component
 {
     private string $defaultReplacementClass = 'svg-inline--fa';
 
     /**
-     * The package containing the icons
+     * The path to the SVGs.
      */
-    private string $package;
+    private string $path;
 
     /**
-     * The style to render
+     * The style to render.
      */
     private string $style;
 
     /**
-     * The icon name
+     * The icon name.
      */
     private string $name;
 
     /**
      * Create a new component instance.
-     *
-     * @param  string  $package
-     * @param  string  $style
-     * @param  string  $name
-     * @return void
      */
-    protected function __construct(string $package, string $style, string $name)
+    protected function __construct(string $path, string $style, string $name)
     {
-        $this->package = $package;
-
+        $this->path = $path;
         $this->style = $style;
-
         $this->name = $name;
     }
 
     /**
      * Get the view / contents that represent the component.
      */
-    public function render() : View
+    final public function render() : View
     {
-        $svg = $this->getSvg($this->package, $this->style, $this->name);
+        $svg = $this->getSvg($this->path, $this->style, $this->name);
 
         $inlineSvgClasses = $this->getInlineSvgClasses($this->name, $svg['width'], $svg['height']);
 
@@ -63,11 +56,11 @@ abstract class FontAwesomeComponent extends Component
     }
 
     /**
-     * Get the svg contents
+     * Get the svg contents.
      */
-    private function getSvg(string $package, string $style, string $name) : array
+    private function getSvg(string $path, string $style, string $name) : array
     {
-        $path = $this->getSvgPath($package, $style, $name);
+        $path = $this->getSvgPath($path, $style, $name);
 
         $contents = file_get_contents($path);
 
@@ -84,13 +77,13 @@ abstract class FontAwesomeComponent extends Component
     }
 
     /**
-     * Get the path to the svg
+     * Get the path to the svg.
      */
-    private function getSvgPath(string $package, string $style, string $name) : string
+    private function getSvgPath(string $path, string $style, string $name) : string
     {
         return sprintf(
-            '%1$s/svgs/%2$s/%3$s.svg',
-            rtrim($package, '/'),
+            '%1$s/%2$s/%3$s.svg',
+            rtrim($path, '/'),
             $style,
             Str::after($name, 'fa-'),
         );
@@ -171,8 +164,8 @@ abstract class FontAwesomeComponent extends Component
     }
 
     /**
-     * Get the css classes needed to display the svg inline
-     * This is meant to mimic how fa's js->svg works
+     * Get the CSS classes needed to display the svg inline.
+     * This is meant to mimic how fa's js->svg works.
      *
      * @link https://fontawesome.com/how-to-use/on-the-web/advanced/svg-javascript-core
      */
