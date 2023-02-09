@@ -64,12 +64,12 @@ final class FontAwesomeBladeServiceProvider extends ServiceProvider
             ));
         }
 
-        if (! is_dir($path)) {
-            throw new RuntimeException(sprintf(
-                '"%1$s" is not a valid Font Awesome path.',
-                $path,
-            ));
-        }
+        // if (! is_dir($path)) {
+        //     throw new RuntimeException(sprintf(
+        //         '"%1$s" is not a valid Font Awesome path.',
+        //         $path,
+        //     ));
+        // }
 
         Blade::componentNamespace('Devlop\\FontAwesome\\Components', 'fa');
 
