@@ -8,6 +8,8 @@ use Devlop\FontAwesome\Components\Brands;
 use Devlop\FontAwesome\Components\Duotone;
 use Devlop\FontAwesome\Components\Light;
 use Devlop\FontAwesome\Components\Regular;
+use Devlop\FontAwesome\Components\SharpRegular;
+use Devlop\FontAwesome\Components\SharpSolid;
 use Devlop\FontAwesome\Components\Solid;
 use Devlop\FontAwesome\Components\Thin;
 use Illuminate\Support\Facades\Blade;
@@ -50,9 +52,9 @@ final class FontAwesomeBladeServiceProvider extends ServiceProvider
             'config',
         );
 
-        $config = $this->app['config']->get('fontawesome');
+        $config = $this->app['config']->get('fontawesome') ?? [];
 
-        $path = $config['path'];
+        $path = $config['path'] ?? null;
 
         if (! is_string($path)) {
             throw new RuntimeException(sprintf(
@@ -63,12 +65,14 @@ final class FontAwesomeBladeServiceProvider extends ServiceProvider
 
         Blade::componentNamespace('Devlop\\FontAwesome\\Components', 'fa');
 
-        $this->app->when(Solid::class)->needs('$path')->give($path);
-        $this->app->when(Regular::class)->needs('$path')->give($path);
-        $this->app->when(Light::class)->needs('$path')->give($path);
-        $this->app->when(Thin::class)->needs('$path')->give($path);
-        $this->app->when(Duotone::class)->needs('$path')->give($path);
         $this->app->when(Brands::class)->needs('$path')->give($path);
+        $this->app->when(Duotone::class)->needs('$path')->give($path);
+        $this->app->when(Light::class)->needs('$path')->give($path);
+        $this->app->when(Regular::class)->needs('$path')->give($path);
+        $this->app->when(Solid::class)->needs('$path')->give($path);
+        $this->app->when(Thin::class)->needs('$path')->give($path);
+        $this->app->when(SharpRegular::class)->needs('$path')->give($path);
+        $this->app->when(SharpSolid::class)->needs('$path')->give($path);
     }
 
     private function getConfigPath(string $fileName) : string

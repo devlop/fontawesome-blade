@@ -8,6 +8,8 @@ use Devlop\FontAwesome\Components\Brands;
 use Devlop\FontAwesome\Components\Duotone;
 use Devlop\FontAwesome\Components\Light;
 use Devlop\FontAwesome\Components\Regular;
+use Devlop\FontAwesome\Components\SharpRegular;
+use Devlop\FontAwesome\Components\SharpSolid;
 use Devlop\FontAwesome\Components\Solid;
 use Devlop\FontAwesome\Components\Thin;
 use Devlop\FontAwesome\FontAwesomeBladeServiceProvider;
@@ -57,6 +59,8 @@ final class RenderTest extends TestCase
             'fa::regular' => ['fa::regular', Regular::class],
             'fa::solid' => ['fa::solid', Solid::class],
             'fa::thin' => ['fa::thin', Thin::class],
+            'fa::sharp-regular' => ['fa::sharp-regular', SharpRegular::class],
+            'fa::sharp-solid' => ['fa::sharp-solid', SharpSolid::class],
         ];
     }
 

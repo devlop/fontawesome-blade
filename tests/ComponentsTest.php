@@ -8,6 +8,8 @@ use Devlop\FontAwesome\Components\Brands;
 use Devlop\FontAwesome\Components\Duotone;
 use Devlop\FontAwesome\Components\Light;
 use Devlop\FontAwesome\Components\Regular;
+use Devlop\FontAwesome\Components\SharpRegular;
+use Devlop\FontAwesome\Components\SharpSolid;
 use Devlop\FontAwesome\Components\Solid;
 use Devlop\FontAwesome\Components\Thin;
 use Devlop\FontAwesome\FontAwesomeBaseComponent;
@@ -46,23 +48,6 @@ final class ComponentsTest extends TestCase
     }
 
     /**
-     * (-pro) Component data provider.
-     *
-     * @return array<string,array<class-string>>
-     */
-    public static function components() : array
-    {
-        return [
-            'brands' => [Brands::class],
-            'duotone' => [Duotone::class],
-            'light' => [Light::class],
-            'regular' => [Regular::class],
-            'solid' => [Solid::class],
-            'thin' => [Thin::class],
-        ];
-    }
-
-    /**
      * (-pro and -free) Component data provider.
      *
      * @return array<string,array<class-string>>
@@ -82,6 +67,8 @@ final class ComponentsTest extends TestCase
             'pro-regular' => [$proPath, Regular::class],
             'pro-solid' => [$proPath, Solid::class],
             'pro-thin' => [$proPath, Thin::class],
+            'pro-sharp-regular' => [$proPath, SharpRegular::class],
+            'pro-sharp-solid' => [$proPath, SharpSolid::class],
         ];
     }
 
@@ -136,9 +123,8 @@ final class ComponentsTest extends TestCase
      */
     public function all_icons_can_be_rendered(string $path, string $componentName) : void
     {
-        $style = Str::of(class_basename($componentName))
-            ->after('Fa')
-            ->lower();
+        $style = (string) Str::of(class_basename($componentName))
+            ->kebab();
 
         $iconsPath = implode('/', [
             $path,
