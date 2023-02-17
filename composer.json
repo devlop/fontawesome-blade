@@ -11,6 +11,7 @@
     ],
     "require": {
         "php": "^7.4|^8.0",
+        "ext-mbstring": "*",
         "laravel/framework": "^7.0|^8.0"
     },
     "require-dev": {
@@ -29,12 +30,9 @@
             "Devlop\\FontAwesome\\Tests\\": "tests/"
         }
     },
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "prefer-stable": true,
     "extra": {
-        "branch-alias": {
-            "dev-master": "1.x-dev"
-        },
         "laravel": {
             "providers": [
                 "Devlop\\FontAwesome\\FontAwesomeBladeServiceProvider"

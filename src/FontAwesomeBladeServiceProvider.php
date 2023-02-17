@@ -8,6 +8,8 @@ use Devlop\FontAwesome\Components\Brands;
 use Devlop\FontAwesome\Components\Duotone;
 use Devlop\FontAwesome\Components\Light;
 use Devlop\FontAwesome\Components\Regular;
+use Devlop\FontAwesome\Components\SharpRegular;
+use Devlop\FontAwesome\Components\SharpSolid;
 use Devlop\FontAwesome\Components\Solid;
 use Devlop\FontAwesome\Components\Thin;
 use Illuminate\Support\Facades\Blade;
@@ -16,18 +18,6 @@ use RuntimeException;
 
 final class FontAwesomeBladeServiceProvider extends ServiceProvider
 {
-    /**
-     * Get the services provided by the provider.
-     *
-     * @return array<class-string>
-     */
-    public function provides() : array
-    {
-        return [
-            //
-        ];
-    }
-
     /**
      * Register the service provider.
      */
@@ -41,7 +31,7 @@ final class FontAwesomeBladeServiceProvider extends ServiceProvider
      */
     public function boot() : void
     {
-        $this->loadViewsFrom(__DIR__ . '/../resources/views', 'fontawesome-blade');
+        $this->loadViewsFrom(realpath(__DIR__ . '/../resources/views'), 'fontawesome-blade');
 
         $this->publishes(
             [
@@ -50,12 +40,7 @@ final class FontAwesomeBladeServiceProvider extends ServiceProvider
             'config',
         );
 
-        // first check legacy config, then load the new config.
-        $config = $this->app['config']->get('fontawesome-blade') ?? $this->app['config']->get('fontawesome');
-
-        $path = array_key_exists('package', $config)
-            ? rtrim($config['package'], '/') . '/svgs'
-            : $config['path'];
+        $path = $this->app['config']->get('fontawesome.path');
 
         if (! is_string($path)) {
             throw new RuntimeException(sprintf(
@@ -64,31 +49,21 @@ final class FontAwesomeBladeServiceProvider extends ServiceProvider
             ));
         }
 
-        // if (! is_dir($path)) {
-        //     throw new RuntimeException(sprintf(
-        //         '"%1$s" is not a valid Font Awesome path.',
-        //         $path,
-        //     ));
-        // }
-
         Blade::componentNamespace('Devlop\\FontAwesome\\Components', 'fa');
 
-        // legacy aliases
-        Blade::components([
-            Solid::class => 'fa.solid',
-            Regular::class => 'fa.regular',
-            Light::class => 'fa.light',
-            Thin::class => 'fa.thin',
-            Duotone::class => 'fa.duotone',
-            Brands::class => 'fa.brands',
-        ]);
-
-        $this->app->when(Solid::class)->needs('$path')->give($path);
-        $this->app->when(Regular::class)->needs('$path')->give($path);
-        $this->app->when(Light::class)->needs('$path')->give($path);
-        $this->app->when(Thin::class)->needs('$path')->give($path);
-        $this->app->when(Duotone::class)->needs('$path')->give($path);
-        $this->app->when(Brands::class)->needs('$path')->give($path);
+        $this->app
+            ->when([
+                Brands::class,
+                Duotone::class,
+                Light::class,
+                Regular::class,
+                Solid::class,
+                Thin::class,
+                SharpRegular::class,
+                SharpSolid::class,
+            ])
+            ->needs('$path')
+            ->give($path);
     }
 
     private function getConfigPath(string $fileName) : string

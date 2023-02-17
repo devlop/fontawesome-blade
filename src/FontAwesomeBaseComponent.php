@@ -34,7 +34,7 @@ abstract class FontAwesomeBaseComponent extends Component
     {
         $this->path = $path;
         $this->style = $style;
-        $this->name = $name;
+        $this->name = mb_strtolower($name);
     }
 
     /**
