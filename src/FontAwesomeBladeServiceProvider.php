@@ -19,18 +19,6 @@ use RuntimeException;
 final class FontAwesomeBladeServiceProvider extends ServiceProvider
 {
     /**
-     * Get the services provided by the provider.
-     *
-     * @return array<class-string>
-     */
-    public function provides() : array
-    {
-        return [
-            //
-        ];
-    }
-
-    /**
      * Register the service provider.
      */
     public function register() : void
