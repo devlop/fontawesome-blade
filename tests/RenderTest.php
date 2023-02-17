@@ -46,27 +46,8 @@ final class RenderTest extends TestCase
     }
 
     /**
-     * (-pro) Component data provider.
-     *
-     * @return array<string,array<class-string>>
-     */
-    public static function components() : array
-    {
-        return [
-            'fa::brands' => ['fa::brands', Brands::class],
-            'fa::duotone' => ['fa::duotone', Duotone::class],
-            'fa::light' => ['fa::light', Light::class],
-            'fa::regular' => ['fa::regular', Regular::class],
-            'fa::solid' => ['fa::solid', Solid::class],
-            'fa::thin' => ['fa::thin', Thin::class],
-            'fa::sharp-regular' => ['fa::sharp-regular', SharpRegular::class],
-            'fa::sharp-solid' => ['fa::sharp-solid', SharpSolid::class],
-        ];
-    }
-
-    /**
      * @test
-     * @dataProvider components
+     * @dataProvider componentsProvider
      *
      * @param  class-string  $componentClassName
      */
@@ -106,5 +87,24 @@ final class RenderTest extends TestCase
         foreach ($expectedOutputs as $expectedOutput) {
             $this->assertStringContainsString($expectedOutput, $actualOutput);
         }
+    }
+
+    /**
+     * (-pro) Component data provider.
+     *
+     * @return array<string,array<class-string>>
+     */
+    public static function componentsProvider() : array
+    {
+        return [
+            'fa::brands' => ['fa::brands', Brands::class],
+            'fa::duotone' => ['fa::duotone', Duotone::class],
+            'fa::light' => ['fa::light', Light::class],
+            'fa::regular' => ['fa::regular', Regular::class],
+            'fa::solid' => ['fa::solid', Solid::class],
+            'fa::thin' => ['fa::thin', Thin::class],
+            'fa::sharp-regular' => ['fa::sharp-regular', SharpRegular::class],
+            'fa::sharp-solid' => ['fa::sharp-solid', SharpSolid::class],
+        ];
     }
 }

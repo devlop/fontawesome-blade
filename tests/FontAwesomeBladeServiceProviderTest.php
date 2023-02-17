@@ -16,9 +16,7 @@ use Orchestra\Testbench\TestCase;
 
 final class FontAwesomeBladeServiceProviderTest extends TestCase
 {
-    /**
-     * @test
-     */
+    /** @test */
     public function registers_fa_component_namespace() : void
     {
         $this->app->make('config')->set([
@@ -37,7 +35,7 @@ final class FontAwesomeBladeServiceProviderTest extends TestCase
 
     /**
      * @test
-     * @dataProvider components
+     * @dataProvider componentsProvider
      *
      * @param  class-string  $componentClassName
      */
@@ -65,7 +63,7 @@ final class FontAwesomeBladeServiceProviderTest extends TestCase
      *
      * @return array<string,array<class-string>>
      */
-    public static function components() : array
+    public static function componentsProvider() : array
     {
         return [
             'brands' => [Brands::class],
