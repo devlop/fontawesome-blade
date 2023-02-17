@@ -50,12 +50,9 @@ final class FontAwesomeBladeServiceProvider extends ServiceProvider
             'config',
         );
 
-        // first check legacy config, then load the new config.
-        $config = $this->app['config']->get('fontawesome-blade') ?? $this->app['config']->get('fontawesome');
+        $config = $this->app['config']->get('fontawesome');
 
-        $path = array_key_exists('package', $config)
-            ? rtrim($config['package'], '/') . '/svgs'
-            : $config['path'];
+        $path = $config['path'];
 
         if (! is_string($path)) {
             throw new RuntimeException(sprintf(
@@ -64,24 +61,7 @@ final class FontAwesomeBladeServiceProvider extends ServiceProvider
             ));
         }
 
-        // if (! is_dir($path)) {
-        //     throw new RuntimeException(sprintf(
-        //         '"%1$s" is not a valid Font Awesome path.',
-        //         $path,
-        //     ));
-        // }
-
         Blade::componentNamespace('Devlop\\FontAwesome\\Components', 'fa');
-
-        // legacy aliases
-        Blade::components([
-            Solid::class => 'fa.solid',
-            Regular::class => 'fa.regular',
-            Light::class => 'fa.light',
-            Thin::class => 'fa.thin',
-            Duotone::class => 'fa.duotone',
-            Brands::class => 'fa.brands',
-        ]);
 
         $this->app->when(Solid::class)->needs('$path')->give($path);
         $this->app->when(Regular::class)->needs('$path')->give($path);

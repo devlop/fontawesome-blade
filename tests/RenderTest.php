@@ -57,13 +57,6 @@ final class RenderTest extends TestCase
             'fa::regular' => ['fa::regular', Regular::class],
             'fa::solid' => ['fa::solid', Solid::class],
             'fa::thin' => ['fa::thin', Thin::class],
-            // legacy
-            'fa.brands' => ['fa.brands', Brands::class],
-            'fa.duotone' => ['fa.duotone', Duotone::class],
-            'fa.light' => ['fa.light', Light::class],
-            'fa.regular' => ['fa.regular', Regular::class],
-            'fa.solid' => ['fa.solid', Solid::class],
-            'fa.thin' => ['fa.thin', Thin::class],
         ];
     }
 
@@ -73,7 +66,7 @@ final class RenderTest extends TestCase
      *
      * @param  class-string  $componentClassName
      */
-    public function all_icons_can_be_rendered(string $componentName, string $componentClassName) : void
+    public function all_components_renders_properly(string $componentName, string $componentClassName) : void
     {
         $iconName = 'starship-freighter';
         $classNames = [
